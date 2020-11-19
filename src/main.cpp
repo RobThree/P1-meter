@@ -69,6 +69,7 @@ void SetupWiFi() {
 void StartWiFi() {
   while (WiFi.waitForConnectResult() != WL_CONNECTED) {
     Serial.println("Connection Failed! Rebooting...");
+    blink(1000, 5);
     delay(5000);
     ESP.restart();
   }
@@ -108,16 +109,15 @@ void setup() {
 
 void readTelegram() {
   if (p1serial.available()) {
-    String line = p1serial.readStringUntil('\n');
-    telegram += line + '\n';
-    Serial.println(line);
-    if (line.startsWith("!")) {
-      Post(telegram);
-      telegram = "";
-      blink(250);
+    while (p1serial.available()) {
+      String line = p1serial.readStringUntil('\n');
+      telegram += line + '\n';
+      yield();
+      if (line.startsWith("!") || telegram.length() > 4096) {
+        Post(telegram);
+        telegram = "";
+      }
     }
-    if (telegram.length() > 4096)
-      telegram = "";
   }
 }
 
