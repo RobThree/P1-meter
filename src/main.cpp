@@ -16,6 +16,15 @@ SoftwareSerial p1serial;
 
 String telegram = "";
 
+void blink(int milliseconds, int repeat = 1) {
+  for (int i = 0; i < repeat; i++) {
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(milliseconds);
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(milliseconds);
+  }
+}
+
 void SetupOTA() {
   ArduinoOTA.setHostname(hostname);
   ArduinoOTA.setPassword(otapassword);
@@ -84,15 +93,6 @@ void Post(String telegram) {
   http.addHeader("Content-Type", "text/plain");
   http.POST(telegram);
   http.end();
-}
-
-void blink(int milliseconds, int repeat = 1) {
-  for (int i = 0; i < repeat; i++) {
-    digitalWrite(LED_BUILTIN, LOW);
-    delay(milliseconds);
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(milliseconds);
-  }
 }
 
 void setup() {
