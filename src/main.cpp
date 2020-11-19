@@ -85,13 +85,25 @@ void Post(String telegram) {
   http.end();
 }
 
+void blink(int milliseconds, int repeat = 1) {
+  for (int i = 0; i < repeat; i++) {
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(milliseconds);
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(milliseconds);
+  }
+}
+
 void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(460800);
   p1serial.begin(BAUDRATE, SERIALCONFIG, RXPIN, -1);
   
   SetupWiFi();
   SetupOTA();
   StartWiFi();
+
+  blink(500, 3);
 }
 
 void readTelegram() {
@@ -102,6 +114,7 @@ void readTelegram() {
     if (line.startsWith("!")) {
       Post(telegram);
       telegram = "";
+      blink(250);
     }
     if (telegram.length() > 4096)
       telegram = "";
