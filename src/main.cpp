@@ -98,7 +98,7 @@ void Post(String telegram) {
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(460800);
-  p1serial.begin(BAUDRATE, SERIALCONFIG, RXPIN, -1);
+  p1serial.begin(BAUDRATE, SERIALCONFIG, RXPIN, -1, true);
   
   SetupWiFi();
   SetupOTA();
