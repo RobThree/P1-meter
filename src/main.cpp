@@ -84,39 +84,44 @@ void StartWiFi() {
   }
 }
 
-void Post(String telegram) {
+void Post(String data) {
   HTTPClient http;
 
+  // Post text as raw data
   http.begin(POSTURL);
-
-  // Start connection and send HTTP header
   http.addHeader("Content-Type", "text/plain");
-  http.POST(telegram);
+  http.POST(data);
   http.end();
 }
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
-  Serial.begin(460800);
-  p1serial.begin(BAUDRATE, SERIALCONFIG, RXPIN, -1, true);
+  
+  // Setup our P1 serial
+  p1serial.begin(BAUDRATE, SERIALCONFIG, RXPIN, -1, true); // Last argument (true) = invert (0 <=> 1)
   
   SetupWiFi();
   SetupOTA();
   StartWiFi();
 
+  // Blink a few times to signal we're connected
   blink(500, 3);
 }
 
 void readTelegram() {
-  if (p1serial.available()) {
-    while (p1serial.available()) {
-      String line = p1serial.readStringUntil('\n');
-      telegram += line + '\n';
-      yield();
-      if (line.startsWith("!") || telegram.length() > 4096) {
-        Post(telegram);
-        telegram = "";
-      }
+  // While data available
+  while (p1serial.available()) {
+    // Read a line
+    String line = p1serial.readStringUntil('\n');
+    // Add to our buffer
+    telegram += line + '\n';
+    yield();
+    // If last line was an "end-of-telegram" OR buffer is becoming too large
+    if (line.startsWith("!") || telegram.length() > 4096) {
+      // Send whatever we got
+      Post(telegram);
+      // Clear buffer
+      telegram = "";
     }
   }
 }
