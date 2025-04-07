@@ -3,14 +3,17 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// Replace with your actual SSID and password:
-#define WIFI_SSID       "***SSID***"
-#define WIFI_PASSWD     "***WIFIPASSWORD***"
+// These can all be set in the web interface and are used as defaults
+#define DEVICENAME          "p1-meter"
 
-#define OTA_HOSTNAME    "***HOSTNAME***"
-#define OTA_PASSWORD    "***OTAPASSWORD***" // See example_env_secrets.ini / env_secrets.ini
-
-#define POSTURL "http://server.local/p1meter/"
+// These can only be set by re-flashing the firmware
+#define OTAPASSWORD         "my_ota_secret"
+#define PORTALTIMEOUT       90
+#define WIFICONNECTTIMEOUT  10
+#define WIFICONNECTRETRIES  255
+#define HTTP_PORT           80
+#define SERIAL_BAUDRATE     115200
+#define REPORTURL           "http://server.local/p1meter/"
 
 #define RXPIN D5        // RX Serial pin
 #define BAUDRATE 115200
