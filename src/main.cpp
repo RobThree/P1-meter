@@ -92,8 +92,7 @@ void readTelegram() {
 
 void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
-    p1serial.begin(BAUDRATE, SERIALCONFIG, RXPIN, -1, true,
-                   512); // Last boolean argument (true) = invert (0 <=> 1)
+    p1serial.begin(BAUDRATE, SERIALCONFIG, RXPIN, -1, true, 256); // Last boolean argument (true) = invert (0 <=> 1)
 
     LittleFS.begin();
     loadSettings();
