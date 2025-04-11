@@ -18,6 +18,7 @@ String telegram = "";
 String lasttelegram = "";
 unsigned long lasttelegrammillis = 0;
 unsigned long telegramcount = 0;
+bool ledstate = false;
 
 void handleReading();
 void handleSettings();
@@ -27,6 +28,7 @@ void readTelegram();
 
 void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, HIGH);
 
     // https://arduino-esp8266.readthedocs.io/en/latest/reference.html#serial
     Serial.setRxBufferSize(RXBUFFER);
@@ -77,6 +79,7 @@ void loop() {
     wifi.ensureConnected();
     uptime.handle();
     readTelegram();
+    yield();
 }
 
 void handleReading() {
@@ -134,13 +137,14 @@ void post(String data) {
 void readTelegram() {
     // While data available
     while (Serial.available()) {
-        // Read a line
+        // Read a line and add it to our buffer
         String line = Serial.readStringUntil('\n');
-        // Add to our buffer
         telegram += line + '\n';
-        yield();
 
-        digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN)); // Blink LED
+        // Blink LED
+        digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+
+        yield();
 
         // If last line was an "end-of-telegram" OR buffer is becoming too large
         if (line.startsWith("!") || telegram.length() > 4096) {
@@ -153,7 +157,7 @@ void readTelegram() {
             // Send whatever we got
             post(lasttelegram);
 
-            digitalWrite(LED_BUILTIN, LOW); // LED OFF
+            digitalWrite(LED_BUILTIN, HIGH); // LED OFF
         }
     }
 }
