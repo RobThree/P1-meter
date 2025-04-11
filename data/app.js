@@ -1,6 +1,6 @@
 async function fetchData() {
     const response = await fetch('/read');
-    return await response.json()        
+    return await response.json();
 }
 async function updateUI(data) {
     let rssi, devicename;
@@ -23,14 +23,18 @@ async function showNotification(message, type) {
     notification.className = `notification ${type}`;
     notification.style.display = 'block';
 
-    setTimeout(() => { notification.style.display = 'none'; }, 10000);
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 10000);
 }
 
 async function loadSettings() {
     try {
         const settings = await fetchData();
+        const overlay = document.getElementById('loadingOverlay');
 
         document.getElementById('devicename').value = settings.devicename;
+        overlay.classList.add('hidden');
     } catch (error) {
         console.error('Error loading settings:', error);
     }
@@ -41,14 +45,14 @@ async function saveSettings(formData) {
         const response = await fetch('/settings', { method: 'POST', body: formData });
         const data = await response.json();
 
-        if (data.status === "success") {
-            showNotification("Settings saved successfully!", "success");
-        } else if (data.status === "error" && data.errors.length > 0) {
-            showNotification("Errors: <ul><li>" + data.errors.join("</li><li>") + "</li></ul>", "error");
+        if (data.status === 'success') {
+            showNotification('Settings saved successfully!', 'success');
+        } else if (data.status === 'error' && data.errors.length > 0) {
+            showNotification('Errors: <ul><li>' + data.errors.join('</li><li>') + '</li></ul>', 'error');
         } else {
-            showNotification("Unexpected response from server", "error");
+            showNotification('Unexpected response from server', 'error');
         }
     } catch (error) {
-        showNotification("Failed to save settings: " + error.message, "error");
+        showNotification('Failed to save settings: ' + error.message, 'error');
     }
 }

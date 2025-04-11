@@ -12,9 +12,7 @@ void Webserver::serveStatic(const char *uri, const char *path, const char *cache
     _server.serveStatic(uri, _fs, path, cacheheader);
 }
 
-void Webserver::begin() {
-    _server.begin();
-}
+void Webserver::begin() { _server.begin(); }
 
 void Webserver::handleClient() { _server.handleClient(); }
 

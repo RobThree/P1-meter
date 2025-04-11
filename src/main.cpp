@@ -22,12 +22,11 @@ void post(String data);
 void readTelegram();
 
 void setup() {
-    Serial.begin(BAUDRATE, SERIALCONFIG);
-    Serial.setRxBufferSize(RXBUFFER);
-    Serial.flush();
+    pinMode(LED_BUILTIN, OUTPUT);
 
-    // Invert the RX serialport by setting a register value, this way the TX might continue normally allowing the serial monitor to read println's
-    USC0(UART0) = USC0(UART0) | BIT(UCRXI);
+    // https://arduino-esp8266.readthedocs.io/en/latest/reference.html#serial
+    Serial.setRxBufferSize(RXBUFFER);
+    Serial.begin(BAUDRATE, SERIALCONFIG, SERIAL_RX_ONLY, 1, true); // true = invert
 
     settings.begin();
     settings.loadSettings(appsettings, [](AppSettings &defaults) {
@@ -77,16 +76,17 @@ void loop() {
 
 void handleReading() {
     JsonDocument response;
-    
+
     JsonObject wifinode = response["wifi"].to<JsonObject>();
     wifinode["rssi"] = WiFi.RSSI();
-    
+
     JsonObject p1node = response["p1"].to<JsonObject>();
     p1node["last"] = lasttelegram;
+    p1node["buffer"] = telegram;
     p1node["count"] = telegramcount;
 
     response["devicename"] = appsettings.deviceName;
-        
+
     server.sendJson(response);
 }
 
@@ -122,11 +122,16 @@ void post(String data) {
 void readTelegram() {
     // While data available
     while (Serial.available()) {
+        telegramcount++;
+
         // Read a line
         String line = Serial.readStringUntil('\n');
         // Add to our buffer
         telegram += line + '\n';
         yield();
+
+        digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN)); // Blink LED
+
         // If last line was an "end-of-telegram" OR buffer is becoming too large
         if (line.startsWith("!") || telegram.length() > 4096) {
             lasttelegram = telegram;
@@ -136,6 +141,8 @@ void readTelegram() {
 
             // Send whatever we got
             post(lasttelegram);
+
+            digitalWrite(LED_BUILTIN, LOW); // LED OFF
         }
     }
 }
