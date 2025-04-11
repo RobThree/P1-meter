@@ -122,8 +122,6 @@ void post(String data) {
 void readTelegram() {
     // While data available
     while (Serial.available()) {
-        telegramcount++;
-
         // Read a line
         String line = Serial.readStringUntil('\n');
         // Add to our buffer
