@@ -15,8 +15,8 @@
 #define SERIAL_BAUDRATE     115200
 #define REPORTURL           "http://server.local/p1meter/"
 
-#define RXPIN D5        // RX Serial pin
 #define BAUDRATE 115200
-#define SERIALCONFIG SWSERIAL_8N1
+#define SERIALCONFIG SERIAL_8N1
+#define RXBUFFER 1500
 
 #endif

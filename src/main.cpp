@@ -10,7 +10,6 @@
 #include <config.h>
 #include <settings.h>
 
-SoftwareSerial p1serial;
 ESP8266WebServer server(HTTP_PORT);
 ESP8266HTTPUpdateServer httpUpdateServer;
 Settings settings;
@@ -71,9 +70,9 @@ void serveFile(const char *path, const char *contentType = "text/html", int cach
 
 void readTelegram() {
     // While data available
-    while (p1serial.available()) {
+    while (Serial.available()) {
         // Read a line
-        String line = p1serial.readStringUntil('\n');
+        String line = Serial.readStringUntil('\n');
         // Add to our buffer
         telegram += line + '\n';
         yield();
@@ -92,7 +91,13 @@ void readTelegram() {
 
 void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
-    p1serial.begin(BAUDRATE, SERIALCONFIG, RXPIN, -1, true, 256); // Last boolean argument (true) = invert (0 <=> 1)
+
+    Serial.begin(BAUDRATE, SERIALCONFIG);
+    Serial.setRxBufferSize(RXBUFFER);
+    Serial.flush();
+
+    // Invert the RX serialport by setting a register value, this way the TX might continue normally allowing the serial monitor to read println's
+    USC0(UART0) = USC0(UART0) | BIT(UCRXI);
 
     LittleFS.begin();
     loadSettings();
