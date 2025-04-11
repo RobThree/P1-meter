@@ -30,7 +30,18 @@
             <form id="configForm">
                 <div class="form-group">
                     <label for="devicename">Devicename</label>
-                    <input type="text" id="devicename" name="devicename" maxlength="32" required />
+                    <input type="text" id="devicename" name="devicename" maxlength="31" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="reporturl">Report URL</label>
+                    <input type="url" id="reporturl" name="reporturl" maxlength="255" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="posttimeout">POST timeout</label>
+                    <input type="number" id="posttimeout" name="posttimeout" required value="" />
+                    <div class="help-text">In milliseconds</div>
                 </div>
 
                 <div class="footer">

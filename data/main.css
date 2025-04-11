@@ -47,7 +47,9 @@ label {
     font-weight: 600;
 }
 
-input[type='text'] {
+input[type='text'],
+input[type='url'],
+input[type='number'] {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
@@ -70,6 +72,16 @@ button {
     font-size: 16px;
     font-weight: 600;
     transition: background-color 0.2s;
+}
+
+#copybutton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 6px 40px;
+    width: 200px;
+    margin: 0 auto;
 }
 
 button.secondary {
@@ -125,6 +137,12 @@ textarea {
     height: 500px;
     font-size: x-small;
     font-family: monospace;
+}
+
+.help-text {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
 }
 
 #rssi,

@@ -38,6 +38,11 @@ void setup() {
     settings.loadSettings(appsettings, [](AppSettings &defaults) {
         strncpy(appsettings.deviceName, DEVICENAME, sizeof(appsettings.deviceName) - 1);
         defaults.deviceName[sizeof(appsettings.deviceName) - 1] = '\0'; // Ensure null termination
+
+        strncpy(appsettings.reportUrl, REPORTURL, sizeof(appsettings.reportUrl) - 1);
+        defaults.reportUrl[sizeof(appsettings.reportUrl) - 1] = '\0'; // Ensure null termination
+
+        defaults.postTimeout = POSTTIMEOUT;
     });
 
     wifi.begin(PORTALTIMEOUT, WIFICONNECTTIMEOUT, WIFICONNECTRETRIES, appsettings.deviceName);
@@ -53,24 +58,6 @@ void setup() {
     server.begin();
 
     ota.begin(appsettings.deviceName, OTAPASSWORD);
-
-    server.on("/settings", HTTP_POST, []() {
-        AppSettings newsettings;
-        JsonDocument response;
-        response["status"] = "";
-        JsonArray errors = response["errors"].to<JsonArray>();
-        strncpy(newsettings.deviceName, server.arg("devicename").c_str(), sizeof(newsettings.deviceName) - 1);
-        newsettings.deviceName[sizeof(newsettings.deviceName) - 1] = '\0'; // Ensure null termination
-        if (strlen(newsettings.deviceName) == 0 || strlen(newsettings.deviceName) > 31) {
-            errors.add("Device name must be between 1 and 31 characters");
-        }
-        if (errors.size() == 0 && settings.saveSettings(newsettings, appsettings)) {
-            response["status"] = "success";
-        } else {
-            response["status"] = "error";
-        }
-        server.sendJson(response);
-    });
 }
 
 void loop() {
@@ -101,6 +88,8 @@ void handleReading() {
     response["uptime"] = uptime.getFormattedUptime();
     response["uptime_ms"] = uptime.getUptimeMilliSeconds();
     response["devicename"] = appsettings.deviceName;
+    response["reporturl"] = appsettings.reportUrl;
+    response["posttimeout"] = appsettings.postTimeout;
 
     server.sendJson(response);
 }
@@ -115,6 +104,16 @@ void handleSettings() {
     if (strlen(newsettings.deviceName) == 0 || strlen(newsettings.deviceName) > 31) {
         errors.add("Device name must be between 1 and 31 characters");
     }
+    strncpy(newsettings.reportUrl, server.arg("reporturl").c_str(), sizeof(newsettings.reportUrl) - 1);
+    newsettings.reportUrl[sizeof(newsettings.reportUrl) - 1] = '\0'; // Ensure null termination
+    if (strlen(newsettings.reportUrl) == 0 || strlen(newsettings.reportUrl) > 255) {
+        errors.add("Report URL must be between 1 and 255 characters");
+    }
+    newsettings.postTimeout = server.arg("posttimeout").toInt();
+    if (newsettings.postTimeout < 0 || newsettings.postTimeout > 60000) {
+        errors.add("POST timeout must be between 0 and 60000 ms");
+    }
+
     if (errors.size() == 0 && settings.saveSettings(newsettings, appsettings)) {
         response["status"] = "success";
     } else {
@@ -128,7 +127,8 @@ void post(String data) {
     HTTPClient http;
 
     // Post text as raw data
-    http.begin(client, REPORTURL);
+    http.setTimeout(appsettings.postTimeout);
+    http.begin(client, appsettings.reportUrl);
     http.addHeader("Content-Type", "text/plain");
     http.POST(data);
     http.end();

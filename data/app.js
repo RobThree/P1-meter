@@ -38,6 +38,8 @@ async function loadSettings() {
         const overlay = document.getElementById('loadingOverlay');
 
         document.getElementById('devicename').value = settings.devicename;
+        document.getElementById('reporturl').value = settings.reporturl;
+        document.getElementById('posttimeout').value = settings.posttimeout;
         overlay.classList.add('hidden');
     } catch (error) {
         console.error('Error loading settings:', error);
@@ -45,6 +47,8 @@ async function loadSettings() {
 }
 
 async function saveSettings(formData) {
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.classList.remove('hidden');
     try {
         const response = await fetch('/settings', { method: 'POST', body: formData });
         const data = await response.json();
@@ -59,4 +63,20 @@ async function saveSettings(formData) {
     } catch (error) {
         showNotification('Failed to save settings: ' + error.message, 'error');
     }
+    overlay.classList.add('hidden');
+}
+
+function copyToClipboard() {
+    const textarea = document.getElementById('last');
+    textarea.select();
+    document.execCommand('copy'); // Since we're not using https, we can't use navigator.clipboard.writeText
+    textarea.setSelectionRange(textarea.selectionEnd, textarea.selectionEnd); // Sets the selection to the same position, effectively clearing it
+
+    let button = document.querySelector('#copybutton');
+    let oldcontent = button.innerHTML;
+    button.innerHTML =
+        '<svg width="16" viewBox="0 0 24 24"xmlns="http://www.w3.org/2000/svg"><path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z" fill="currentColor"/></svg> Copied!';
+    setTimeout(() => {
+        button.innerHTML = oldcontent;
+    }, 2000);
 }
