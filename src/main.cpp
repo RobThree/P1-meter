@@ -2,17 +2,21 @@
 #include "ota.h"
 #include "settings.h"
 #include "simplewifi.h"
+#include "uptime.h"
 #include "webserver.h"
 #include <ESP8266HTTPClient.h>
 #include <config.h>
 
 OTA ota = OTA();
-SimpleWiFi wifi = SimpleWiFi();
 Settings settings = Settings();
+SimpleWiFi wifi = SimpleWiFi();
+Uptime uptime = Uptime();
 Webserver server(LittleFS, HTTP_PORT);
+
 AppSettings appsettings;
 String telegram = "";
 String lasttelegram = "";
+unsigned long lasttelegrammillis = 0;
 unsigned long telegramcount = 0;
 
 void handleReading();
@@ -71,6 +75,7 @@ void loop() {
     server.handleClient();
     ota.handle();
     wifi.ensureConnected();
+    uptime.handle();
     readTelegram();
 }
 
@@ -82,9 +87,16 @@ void handleReading() {
 
     JsonObject p1node = response["p1"].to<JsonObject>();
     p1node["last"] = lasttelegram;
-    p1node["buffer"] = telegram;
     p1node["count"] = telegramcount;
 
+    char lastUpdateStr[32];
+    unsigned long lastupdate = millis() - lasttelegrammillis;
+    snprintf(lastUpdateStr, sizeof(lastUpdateStr), "%.2f seconds ago", lastupdate / 1000.0);
+    p1node["lastupdate"] = lastUpdateStr;
+    p1node["lastupdate_ms"] = lastupdate;
+
+    response["uptime"] = uptime.getFormattedUptime();
+    response["uptime_ms"] = uptime.getUptimeMilliSeconds();
     response["devicename"] = appsettings.deviceName;
 
     server.sendJson(response);
@@ -136,6 +148,7 @@ void readTelegram() {
             // Clear buffer
             telegram = "";
             telegramcount++;
+            lasttelegrammillis = millis();
 
             // Send whatever we got
             post(lasttelegram);

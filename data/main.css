@@ -120,7 +120,15 @@ input:invalid + .error {
     margin-top: 5px;
 }
 
-#rssi {
+textarea {
+    width: 100%;
+    height: 500px;
+    font-size: x-small;
+    font-family: monospace;
+}
+
+#rssi,
+#uptime {
     font-size: 10px;
     color: #888;
     margin-top: 20px;

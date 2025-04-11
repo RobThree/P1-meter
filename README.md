@@ -15,14 +15,12 @@ Where you go from here is up to you. Personally, I use [DSMRParser.Net](https://
 
 ## Hardware
 
-This project is based on a Wemos D1 mini. The cicruit is pretty simple: 
+This project is based on a Wemos D1 mini. The cicruit is pretty simple:
 
-![Circuit](/doc/schema.png)
+![Schema](/doc/schema.png)
 
-![Circuit](/doc/circuit.png)
-
-It has been a while since I built this project and I'm not sure if this is the best way to do this. But it works for me:
+There is some [discussion](https://x.com/ba0sh1/status/759239169071837184) on wether the Wemos [is](https://hackaday.com/2022/05/12/is-esp8266-5-v-tolerant-this-curve-tracer-says-yes/) 5V tolerant or [not](https://hackaday.com/2016/07/28/ask-hackaday-is-the-esp8266-5v-tolerant/). So far, this has been working fine for me. But when in doubt, add a [series resistor](https://hackaday.com/2022/05/12/is-esp8266-5-v-tolerant-this-curve-tracer-says-yes/#comment-6472529).
 
 ![Works On My Machine!](/doc/womm.png)
 
-This was a 'weekend project' many moons ago. I have polished it *a little* recently, but don't expect too much.
+This was a 'weekend project' many moons ago. I have polished it _a little_ recently, but don't expect too much.

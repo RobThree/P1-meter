@@ -3,16 +3,20 @@ async function fetchData() {
     return await response.json();
 }
 async function updateUI(data) {
-    let rssi, devicename;
+    let devicename, last, uptime, rssi;
     try {
         const data = await fetchData();
-        rssi = `RSSI: ${data.wifi.rssi} dBm`;
         devicename = data.devicename;
+        last = data.p1.last;
+        uptime = `Uptime: ${data.uptime}`;
+        rssi = `RSSI: ${data.wifi.rssi} dBm`;
     } catch (error) {
         console.error('Error fetching sensor data:', error);
-        telegram = age_ms = rssi = devicename = 'Error';
+        devicename = last = uptime = rssi = 'Error';
     }
     document.getElementById('devicename').textContent = devicename;
+    document.getElementById('last').textContent = last;
+    document.getElementById('uptime').textContent = uptime;
     document.getElementById('rssi').textContent = rssi;
     setTimeout(updateUI, 10000);
 }
