@@ -60,6 +60,9 @@ input[type='text'],
 input[type='url'] {
     width: 100%;
 }
+input[type='number'] {
+    width: 20%;
+}
 
 input[type='submit'] {
     margin-left: 10px;
