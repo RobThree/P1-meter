@@ -15,3 +15,4 @@ Resources:
 -   [P1 poort slimme meter (hardware)](http://domoticx.com/p1-poort-slimme-meter-hardware/)
 -   [peckham/DsmrParser](https://github.com/peckham/DsmrParser)
 -   [SmartyReader](https://www.weigu.lu/microcontroller/smartyReader_P1/index.html)
+-   [DavyLandman/p1-esp8266](https://github.com/DavyLandman/p1-esp8266/blob/da716c762152ed02b58453eb36a614850b248ac0/src/main.cpp)

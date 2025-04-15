@@ -1,6 +1,6 @@
 # ![Logo](data/favicon.svg) P1-meter
 
-This project reads "telegrams" from a P1 meter and POSTs them to a given HTTP endpoint for further processing. No fancy schmancy MQTT stuff or anything. Plain, simple, pure HTTP POST. That's it.
+This project reads "telegrams" from a P1 meter and POSTs them to a given HTTP endpoint for further processing and also provides the data over TCP port 23 (for Home Assitant integration for example). No fancy schmancy MQTT stuff or anything. Plain, simple, pure HTTP POST + Serial over WiFi. That's it.
 
 ## Getting started
 

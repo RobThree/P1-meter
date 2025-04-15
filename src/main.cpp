@@ -4,6 +4,7 @@
 #include "simplewifi.h"
 #include "uptime.h"
 #include "webserver.h"
+#include "wifiserialserver.h"
 #include <ESP8266HTTPClient.h>
 #include <config.h>
 
@@ -12,6 +13,7 @@ Settings settings = Settings();
 SimpleWiFi wifi = SimpleWiFi();
 Uptime uptime = Uptime();
 Webserver server(LittleFS, HTTP_PORT);
+WiFiSerialServer serialserver(WIFISERIALPORT);
 
 AppSettings appsettings;
 String telegram = "";
@@ -58,6 +60,8 @@ void setup() {
     server.begin();
 
     ota.begin(appsettings.deviceName, OTAPASSWORD);
+
+    serialserver.begin();
 }
 
 void loop() {
@@ -65,6 +69,7 @@ void loop() {
     ota.handle();
     wifi.ensureConnected();
     uptime.handle();
+    serialserver.handle();
     readTelegram();
     yield();
 }
@@ -156,6 +161,7 @@ void readTelegram() {
 
             // Send whatever we got
             post(lasttelegram);
+            serialserver.send(lasttelegram);
 
             digitalWrite(LED_BUILTIN, HIGH); // LED OFF
         }
